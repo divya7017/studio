@@ -16,7 +16,6 @@ export async function GET(request: NextRequest) {
       method: 'GET',
       headers: {
         'Authorization': authToken,
-        'ngrok-skip-browser-warning': 'true',
       },
     });
 
