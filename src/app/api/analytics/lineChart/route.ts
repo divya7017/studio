@@ -20,6 +20,14 @@ export async function GET(request: NextRequest) {
     });
 
     const data = await externalApiResponse.text();
+    
+    if (!externalApiResponse.ok) {
+      console.error("External API error on line chart:", data);
+      return new NextResponse(data || `External API Error: ${externalApiResponse.status}`, {
+        status: externalApiResponse.status,
+        statusText: externalApiResponse.statusText,
+      });
+    }
 
     return new NextResponse(data, {
       status: externalApiResponse.status,
