@@ -65,6 +65,8 @@ export const getBarChartData = async (filters: BarChartFilters): Promise<Feature
 interface LineChartFilters {
     featureName?: string | null;
     dateRange?: DateRange;
+    gender?: string;
+    age?: string;
 }
 
 export const getLineChartData = async (filters: LineChartFilters): Promise<TimeTrend[]> => {
@@ -83,6 +85,19 @@ export const getLineChartData = async (filters: LineChartFilters): Promise<TimeT
     }
     if (filters.dateRange?.to) {
         params.append('endDate', new Date(filters.dateRange.to).toISOString());
+    }
+    if (filters.gender && filters.gender !== 'all') {
+        params.append('gender', filters.gender);
+    }
+    if (filters.age && filters.age !== 'all') {
+        if (filters.age === '<18') {
+            params.append('maxAge', '17');
+        } else if (filters.age === '18-40') {
+            params.append('minAge', '18');
+            params.append('maxAge', '40');
+        } else if (filters.age === '>40') {
+            params.append('minAge', '41');
+        }
     }
 
     const response = await fetch(`/api/analytics/lineChart?${params.toString()}`, {

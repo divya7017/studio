@@ -52,12 +52,12 @@ export default function DashboardPage() {
     if (!isAuthenticated) return;
     setIsLoadingLineChart(true);
     try {
-      const data = await getLineChartData({ featureName: selectedFeature, dateRange });
+      const data = await getLineChartData({ featureName: selectedFeature, dateRange, age, gender });
       setLineChartData(data);
     } finally {
       setIsLoadingLineChart(false);
     }
-  }, [isAuthenticated, selectedFeature, dateRange]);
+  }, [isAuthenticated, selectedFeature, dateRange, age, gender]);
 
   useEffect(() => {
     fetchBarData();
@@ -67,12 +67,8 @@ export default function DashboardPage() {
     fetchLineData();
   }, [fetchLineData]);
   
-  const handleChartClick = (featureName: string) => {
-    trackFeatureClick(featureName);
-  };
-  
   const handleBarClick = (barName: string) => {
-    handleChartClick('chart_bar_click');
+    trackFeatureClick(barName);
     setSelectedFeature(prev => prev === barName ? null : barName);
   };
 
@@ -121,7 +117,7 @@ export default function DashboardPage() {
                 />
             )}
           </div>
-          <div className="col-span-1" onClick={() => handleChartClick('chart_line_click')}>
+          <div className="col-span-1" onClick={() => trackFeatureClick('chart_line_click')}>
             {isLoadingLineChart ? (
               <Card>
                 <Skeleton className="h-[388px] w-full" />

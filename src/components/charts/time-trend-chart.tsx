@@ -25,9 +25,13 @@ interface TimeTrendChartProps {
 }
 
 export default function TimeTrendChart({ data, featureName, hasDateFilter }: TimeTrendChartProps) {
-  const description = featureName
-    ? `Click trends for "${featureName}" ${hasDateFilter ? "over the selected period" : "over all time"}.`
-    : `Overall click trends ${hasDateFilter ? "over the selected period" : "over all time"}.`;
+  let description = 'Overall click trends over all time.';
+  if (featureName) {
+    description = `Clicks Daily for "${featureName}"${hasDateFilter ? ' over the selected period' : ''}.`;
+  } else if (hasDateFilter) {
+    description = 'Overall click trends over the selected period.';
+  }
+
 
   return (
     <Card>
@@ -61,7 +65,8 @@ export default function TimeTrendChart({ data, featureName, hasDateFilter }: Tim
                     return date.toLocaleDateString("en-IN", {
                       timeZone: "Asia/Kolkata",
                       month: "short",
-                      day: "numeric",
+                      day: "2-digit",
+                      year: "numeric"
                     });
                   }}
                 />
