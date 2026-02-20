@@ -7,11 +7,10 @@ import { DateRange } from 'react-day-picker';
 import DashboardHeader from '@/components/dashboard-header';
 import Filters from '@/components/filters';
 import FeatureUsageChart from '@/components/charts/feature-usage-chart';
-import TimeTrendChart from '@/components/charts/time-trend-chart';
-import { FeatureUsage, TimeTrend } from '@/lib/data';
+import { FeatureUsage } from '@/lib/data';
 import usePersistentState from '@/hooks/use-persistent-state';
 import { trackFeatureClick } from '@/lib/tracking';
-import { getBarChartData, getLineChartData } from '@/lib/analytics';
+import { getBarChartData } from '@/lib/analytics';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -19,16 +18,13 @@ export default function DashboardPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
+  // Filters state is maintained, but not currently used for fetching.
   const [dateRange, setDateRange] = usePersistentState<DateRange | undefined>('filter-dateRange', undefined);
   const [age, setAge] = usePersistentState<string>('filter-age', 'all');
   const [gender, setGender] = usePersistentState<string>('filter-gender', 'all');
   
   const [featureUsageData, setFeatureUsageData] = useState<FeatureUsage[]>([]);
-  const [timeTrend, setTimeTrend] = useState<TimeTrend[]>([]);
   const [isLoadingBarChart, setIsLoadingBarChart] = useState(true);
-  const [isLoadingLineChart, setIsLoadingLineChart] = useState(false);
-
-  const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
@@ -43,43 +39,19 @@ export default function DashboardPage() {
     if (!isAuthenticated) return;
     setIsLoadingBarChart(true);
     try {
-      const data = await getBarChartData(gender, age, dateRange);
+      // Calling getBarChartData without any parameters as requested.
+      const data = await getBarChartData();
       setFeatureUsageData(data);
     } finally {
       setIsLoadingBarChart(false);
     }
-  }, [isAuthenticated, gender, age, dateRange]);
-
-  const fetchLineData = useCallback(async () => {
-    if (!isAuthenticated || !selectedFeature) {
-        setTimeTrend([]);
-        setIsLoadingLineChart(false);
-        return;
-    };
-    setIsLoadingLineChart(true);
-    try {
-      const data = await getLineChartData(selectedFeature, dateRange);
-      setTimeTrend(data);
-    } finally {
-      setIsLoadingLineChart(false);
-    }
-  }, [isAuthenticated, selectedFeature, dateRange]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if(isAuthenticated) {
       fetchBarData();
     }
   }, [isAuthenticated, fetchBarData]);
-
-  useEffect(() => {
-    if(isAuthenticated) {
-      fetchLineData();
-    }
-  }, [isAuthenticated, fetchLineData]);
-
-  const handleBarClick = (featureName: string) => {
-    setSelectedFeature(featureName);
-  };
   
   const handleChartClick = () => {
     trackFeatureClick('chart_bar');
@@ -108,8 +80,8 @@ export default function DashboardPage() {
             onGenderChange={setGender}
           />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <div className="col-span-1 lg:col-span-4 cursor-pointer" onClick={handleChartClick}>
+        <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-1">
+          <div className="col-span-1 cursor-pointer" onClick={handleChartClick}>
             {isLoadingBarChart ? (
                 <Card>
                     <Skeleton className="h-[388px] w-full" />
@@ -117,21 +89,8 @@ export default function DashboardPage() {
             ) : (
                 <FeatureUsageChart 
                     data={featureUsageData} 
-                    onBarClick={handleBarClick}
-                    selectedFeature={selectedFeature}
-                />
-            )}
-          </div>
-          <div className="col-span-1 lg:col-span-3 cursor-pointer" onClick={handleChartClick}>
-            {isLoadingLineChart && selectedFeature ? (
-                 <Card>
-                    <Skeleton className="h-[388px] w-full" />
-                 </Card>
-            ) : (
-                <TimeTrendChart 
-                    data={timeTrend}
-                    featureName={selectedFeature}
-                    hasDateFilter={!!dateRange}
+                    onBarClick={() => {}} // onBarClick does nothing for now
+                    selectedFeature={null}
                 />
             )}
           </div>
