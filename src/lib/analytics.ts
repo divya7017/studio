@@ -3,8 +3,6 @@
 import { DateRange } from "react-day-picker";
 import { FeatureUsage, TimeTrend } from "./data";
 
-const API_BASE_URL = 'https://man-unrailed-noncorruptibly.ngrok-free.dev';
-
 const getToken = () => {
   if (typeof window !== 'undefined') {
     return localStorage.getItem('authToken');
@@ -58,7 +56,7 @@ export const getBarChartData = async (
         params.append('endDate', toDate.toISOString());
     }
 
-    const response = await fetch(`${API_BASE_URL}/analytics/bar?${params.toString()}`, {
+    const response = await fetch(`/api/analytics/bar?${params.toString()}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -94,7 +92,7 @@ export const getLineChartData = async (
         params.append('endDate', toDate.toISOString());
     }
 
-    const response = await fetch(`${API_BASE_URL}/analytics/lineChart?${params.toString()}`, {
+    const response = await fetch(`/api/analytics/lineChart?${params.toString()}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
