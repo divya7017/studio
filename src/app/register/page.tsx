@@ -142,7 +142,7 @@ export default function RegisterPage() {
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your gender" />
-                        </Trigger>
+                        </SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="Male">Male</SelectItem>
