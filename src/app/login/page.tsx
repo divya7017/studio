@@ -38,16 +38,20 @@ export default function LoginPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
         },
         body: JSON.stringify(values),
       });
 
+      const responseText = await response.text();
+
       if (response.ok) {
-        const token = await response.text();
-        if (token) {
+        const isErrorString = responseText.toLowerCase().includes('not found') || responseText.toLowerCase().includes('invalid password');
+
+        if (responseText && !isErrorString) {
           const user = { name: values.username, email: "" };
           
-          localStorage.setItem("authToken", token);
+          localStorage.setItem("authToken", responseText);
           localStorage.setItem("user", JSON.stringify(user));
 
           toast({
@@ -59,15 +63,14 @@ export default function LoginPage() {
            toast({
             variant: "destructive",
             title: "Login Failed",
-            description: "No access token received from server.",
+            description: responseText || "Invalid username or password.",
           });
         }
       } else {
-        const errorText = await response.text();
-        let errorMessage = errorText;
+        let errorMessage = responseText;
         try {
-          const errorJson = JSON.parse(errorText);
-          errorMessage = errorJson.message || errorText;
+          const errorJson = JSON.parse(responseText);
+          errorMessage = errorJson.message || responseText;
         } catch (e) {
         }
         toast({
