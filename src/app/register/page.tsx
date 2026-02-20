@@ -46,24 +46,27 @@ export default function RegisterPage() {
         body: JSON.stringify(values),
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.access_token) {
-        const user = { name: values.username, email: "" };
-      
-        localStorage.setItem("authToken", data.access_token);
-        localStorage.setItem("user", JSON.stringify(user));
-
-        toast({
-          title: "Registration Successful",
-          description: "Your account has been created.",
-        });
-        router.push("/dashboard");
+      if (response.ok) {
+        const responseText = await response.text();
+        if (responseText.includes('Register Successful')) {
+          toast({
+            title: "Registration Successful",
+            description: "Your account has been created. Please log in.",
+          });
+          router.push("/login");
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Registration Error",
+            description: responseText || "Received an unexpected response from the server.",
+          });
+        }
       } else {
+        const errorData = await response.json();
         toast({
           variant: "destructive",
           title: "Registration Failed",
-          description: data.message || "Could not create your account. Please try again.",
+          description: errorData.message || "Could not create your account. Please try again.",
         });
       }
     } catch (error) {
