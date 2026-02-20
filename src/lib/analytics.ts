@@ -50,10 +50,12 @@ export const getBarChartData = async (
     }
 
     if (dateRange?.from) {
-        params.append('startDate', dateRange.from.toISOString());
+        const fromDate = new Date(dateRange.from);
+        params.append('startDate', fromDate.toISOString());
     }
     if (dateRange?.to) {
-        params.append('endDate', dateRange.to.toISOString());
+        const toDate = new Date(dateRange.to);
+        params.append('endDate', toDate.toISOString());
     }
 
     const response = await fetch(`${API_BASE_URL}/analytics/bar?${params.toString()}`, {
@@ -84,10 +86,12 @@ export const getLineChartData = async (
     params.append('featureName', featureName);
 
     if (dateRange?.from) {
-        params.append('startDate', dateRange.from.toISOString());
+        const fromDate = new Date(dateRange.from);
+        params.append('startDate', fromDate.toISOString());
     }
     if (dateRange?.to) {
-        params.append('endDate', dateRange.to.toISOString());
+        const toDate = new Date(dateRange.to);
+        params.append('endDate', toDate.toISOString());
     }
 
     const response = await fetch(`${API_BASE_URL}/analytics/lineChart?${params.toString()}`, {
