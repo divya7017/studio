@@ -9,12 +9,10 @@ export type TimeTrend = {
 };
 
 export const featureUsageData: FeatureUsage[] = [
-  { name: 'Dashboard View', totalClicks: 2450 },
-  { name: 'Report Export', totalClicks: 1890 },
-  { name: 'User Management', totalClicks: 980 },
-  { name: 'Settings', totalClicks: 1398 },
-  { name: 'Help & Support', totalClicks: 600 },
-  { name: 'API Access', totalClicks: 350 },
+  { name: 'filter_gender', totalClicks: 120 },
+  { name: 'chart_bar', totalClicks: 135 },
+  { name: 'filter_age', totalClicks: 165 },
+  { name: 'date_picker', totalClicks: 210 },
 ];
 
 const generateDateRange = (days: number) => {
@@ -38,10 +36,8 @@ const generateRandomClicks = (base: number, variance: number) => {
 };
 
 export const timeTrendData: { [key: string]: TimeTrend[] } = {
-  'Dashboard View': generateRandomClicks(80, 40),
-  'Report Export': generateRandomClicks(60, 30),
-  'User Management': generateRandomClicks(30, 15),
-  'Settings': generateRandomClicks(45, 20),
-  'Help & Support': generateRandomClicks(20, 10),
-  'API Access': generateRandomClicks(10, 8),
+  'date_picker': generateRandomClicks(80, 40),
+  'filter_age': generateRandomClicks(60, 30),
+  'chart_bar': generateRandomClicks(30, 15),
+  'filter_gender': generateRandomClicks(45, 20),
 };

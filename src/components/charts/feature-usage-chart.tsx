@@ -1,10 +1,9 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, XAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -12,9 +11,9 @@ import { ChartConfig, ChartContainer, ChartTooltipContent } from "@/components/u
 import { FeatureUsage } from "@/lib/data"
 
 const chartConfig = {
-  clicks: {
+  totalClicks: {
     label: "Clicks",
-    color: "hsl(var(--primary))",
+    color: "hsl(var(--chart-1))",
   },
 } satisfies ChartConfig
 
@@ -28,37 +27,36 @@ export default function FeatureUsageChart({ data, onBarClick, selectedFeature }:
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Feature Usage</CardTitle>
-        <CardDescription>Total click counts for each feature.</CardDescription>
+        <CardTitle className="font-headline text-center">Total Clicks</CardTitle>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
           <ResponsiveContainer>
             <BarChart
               data={data}
+              layout="vertical"
               margin={{
-                top: 5,
-                right: 10,
-                left: 10,
-                bottom: 5,
+                left: 20,
+                right: 30,
               }}
             >
-              <CartesianGrid vertical={false} />
-              <XAxis
+              <CartesianGrid horizontal={false} />
+              <YAxis
                 dataKey="name"
+                type="category"
                 tickLine={false}
-                tickMargin={10}
                 axisLine={false}
-                tickFormatter={(value) => value.slice(0, 10) + (value.length > 10 ? '...' : '')}
+                tickMargin={10}
+                width={100}
               />
+              <XAxis type="number" />
               <Tooltip
-                cursor={false}
+                cursor={{ fill: "transparent" }}
                 content={<ChartTooltipContent indicator="dot" />}
               />
               <Bar
                 dataKey="totalClicks"
-                name="Clicks"
-                fill="var(--color-clicks)"
+                fill="var(--color-totalClicks)"
                 radius={4}
                 onClick={(d) => onBarClick(d.name)}
                 className="cursor-pointer"
