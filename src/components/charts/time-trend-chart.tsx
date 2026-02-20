@@ -21,15 +21,20 @@ const chartConfig = {
 interface TimeTrendChartProps {
   data: TimeTrend[] | undefined;
   featureName: string | null;
+  hasDateFilter: boolean;
 }
 
-export default function TimeTrendChart({ data, featureName }: TimeTrendChartProps) {
+export default function TimeTrendChart({ data, featureName, hasDateFilter }: TimeTrendChartProps) {
+  const description = featureName
+    ? `Click trends for "${featureName}" ${hasDateFilter ? "over the selected period" : "over all time"}.`
+    : "Select a feature from the chart above to see its trend.";
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="font-headline">Time Trend Analysis</CardTitle>
         <CardDescription>
-          {featureName ? `Click trends for "${featureName}" over the last 30 days.` : "Select a feature from the chart above to see its trend."}
+          {description}
         </CardDescription>
       </CardHeader>
       <CardContent>

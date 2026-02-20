@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { DateRange } from 'react-day-picker';
-import { addDays } from 'date-fns';
 
 import DashboardHeader from '@/components/dashboard-header';
 import Filters from '@/components/filters';
@@ -20,10 +19,7 @@ export default function DashboardPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   
-  const [dateRange, setDateRange] = usePersistentState<DateRange | undefined>('filter-dateRange', {
-    from: addDays(new Date(), -29),
-    to: new Date(),
-  });
+  const [dateRange, setDateRange] = usePersistentState<DateRange | undefined>('filter-dateRange', undefined);
   const [age, setAge] = usePersistentState<string>('filter-age', 'all');
   const [gender, setGender] = usePersistentState<string>('filter-gender', 'all');
   
@@ -138,6 +134,7 @@ export default function DashboardPage() {
                 <TimeTrendChart 
                     data={timeTrend}
                     featureName={selectedFeature}
+                    hasDateFilter={!!dateRange}
                 />
             )}
           </div>
