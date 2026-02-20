@@ -58,7 +58,11 @@ export default function TimeTrendChart({ data, featureName, hasDateFilter }: Tim
                   tickMargin={8}
                   tickFormatter={(value) => {
                     const date = new Date(value);
-                    return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                    return date.toLocaleDateString("en-IN", {
+                      timeZone: "Asia/Kolkata",
+                      month: "short",
+                      day: "numeric",
+                    });
                   }}
                 />
                 <Tooltip
