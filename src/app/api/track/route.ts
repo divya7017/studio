@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'featureName is missing from body' }, { status: 400 });
     }
 
-    const externalApiResponse = await fetch('https://man-unrailed-noncorruptibly.ngrok-free.dev/track', {
+    const externalApiResponse = await fetch('https://analyticsdashboard-production-c0d2.up.railway.app/track', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
