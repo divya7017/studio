@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 const registerSchema = z.object({
   username: z.string().min(2, { message: "Username must be at least 2 characters." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-  age: z.coerce.number().min(1, { message: "Please enter a valid age." }),
+  age: z.string().min(1, { message: "Please enter a valid age." }),
   gender: z.string().min(1, { message: "Please select a gender." }),
 });
 
@@ -31,6 +31,7 @@ export default function RegisterPage() {
     defaultValues: {
       username: "",
       password: "",
+      age: "",
       gender: "",
     },
   });
@@ -144,9 +145,9 @@ export default function RegisterPage() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem value="Male">Male</SelectItem>
+                        <SelectItem value="Female">Female</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
