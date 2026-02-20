@@ -36,9 +36,12 @@ export default function DashboardPage() {
 
   const handleBarClick = (featureName: string) => {
     setSelectedFeature(featureName);
-    trackFeatureClick(featureName);
   };
   
+  const handleChartClick = () => {
+    trackFeatureClick('chart_bar');
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -63,14 +66,14 @@ export default function DashboardPage() {
           />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <div className="col-span-1 lg:col-span-4">
+          <div className="col-span-1 lg:col-span-4 cursor-pointer" onClick={handleChartClick}>
             <FeatureUsageChart 
               data={featureUsageData} 
               onBarClick={handleBarClick}
               selectedFeature={selectedFeature}
             />
           </div>
-          <div className="col-span-1 lg:col-span-3">
+          <div className="col-span-1 lg:col-span-3 cursor-pointer" onClick={handleChartClick}>
             <TimeTrendChart 
               data={selectedFeature ? timeTrendData[selectedFeature] : undefined}
               featureName={selectedFeature}
