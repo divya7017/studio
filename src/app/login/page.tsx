@@ -34,7 +34,7 @@ export default function LoginPage() {
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://man-unrailed-noncorruptibly.ngrok-free.dev/auth/login', {
+      const response = await fetch('https://analyticsdashboard-production-c0d2.up.railway.app/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
