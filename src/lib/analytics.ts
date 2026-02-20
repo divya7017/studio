@@ -49,8 +49,8 @@ export const getBarChartData = async (): Promise<FeatureUsage[]> => {
 };
 
 export const getLineChartData = async (
-    featureName: string,
-    dateRange: DateRange | undefined
+    featureName?: string,
+    dateRange?: DateRange
 ): Promise<TimeTrend[]> => {
     const token = getToken();
     if (!token) {
@@ -59,7 +59,9 @@ export const getLineChartData = async (
     }
 
     const params = new URLSearchParams();
-    params.append('featureName', featureName);
+    if (featureName) {
+        params.append('featureName', featureName);
+    }
 
     if (dateRange?.from) {
         const fromDate = new Date(dateRange.from);

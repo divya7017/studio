@@ -27,7 +27,7 @@ interface TimeTrendChartProps {
 export default function TimeTrendChart({ data, featureName, hasDateFilter }: TimeTrendChartProps) {
   const description = featureName
     ? `Click trends for "${featureName}" ${hasDateFilter ? "over the selected period" : "over all time"}.`
-    : "Select a feature from the chart above to see its trend.";
+    : `Overall click trends ${hasDateFilter ? "over the selected period" : "over all time"}.`;
 
   return (
     <Card>
@@ -77,7 +77,7 @@ export default function TimeTrendChart({ data, featureName, hasDateFilter }: Tim
             </ResponsiveContainer>
           ) : (
             <div className="flex h-[300px] w-full items-center justify-center text-muted-foreground">
-              <p>{featureName ? "No data available for this feature." : "Please select a feature."}</p>
+              <p>No data available to display.</p>
             </div>
           )}
         </ChartContainer>
