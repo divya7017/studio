@@ -67,7 +67,11 @@ export const getBarChartData = async (
         return [];
     }
 
-    return response.json();
+    const data = await response.json();
+    return data.map((item: { feature: string; count: number }) => ({
+      name: item.feature,
+      totalClicks: item.count,
+    }));
 };
 
 export const getLineChartData = async (
@@ -103,5 +107,9 @@ export const getLineChartData = async (
         return [];
     }
 
-    return response.json();
+    const data = await response.json();
+    return data.map((item: { date: string; count: number }) => ({
+      date: item.date,
+      clicks: item.count,
+    }));
 };
