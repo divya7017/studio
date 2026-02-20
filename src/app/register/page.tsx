@@ -47,8 +47,9 @@ export default function RegisterPage() {
         body: JSON.stringify(values),
       });
 
+      const responseText = await response.text();
+
       if (response.ok) {
-        const responseText = await response.text();
         if (responseText.includes('Register Successful')) {
           toast({
             title: "Registration Successful",
@@ -63,11 +64,10 @@ export default function RegisterPage() {
           });
         }
       } else {
-        const errorData = await response.json();
         toast({
           variant: "destructive",
           title: "Registration Failed",
-          description: errorData.message || "Could not create your account. Please try again.",
+          description: responseText || "Could not create your account. Please try again.",
         });
       }
     } catch (error) {
@@ -126,7 +126,7 @@ export default function RegisterPage() {
                   <FormItem>
                     <FormLabel>Age</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder="25" {...field} />
+                      <Input type="text" inputMode="numeric" placeholder="25" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -142,7 +142,7 @@ export default function RegisterPage() {
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select your gender" />
-                        </SelectTrigger>
+                        </Trigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="Male">Male</SelectItem>

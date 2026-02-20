@@ -42,24 +42,40 @@ export default function LoginPage() {
         body: JSON.stringify(values),
       });
 
-      const data = await response.json();
+      if (response.ok) {
+        const data = await response.json();
+        if (data.access_token) {
+          const user = { name: values.username, email: "" };
+          
+          localStorage.setItem("authToken", data.access_token);
+          localStorage.setItem("user", JSON.stringify(user));
 
-      if (response.ok && data.access_token) {
-        const user = { name: values.username, email: "" };
-        
-        localStorage.setItem("authToken", data.access_token);
-        localStorage.setItem("user", JSON.stringify(user));
-
-        toast({
-          title: "Login Successful",
-          description: "Welcome back!",
-        });
-        router.push("/dashboard");
+          toast({
+            title: "Login Successful",
+            description: "Welcome back!",
+          });
+          router.push("/dashboard");
+        } else {
+           toast({
+            variant: "destructive",
+            title: "Login Failed",
+            description: "No access token received from server.",
+          });
+        }
       } else {
+        const errorText = await response.text();
+        let errorMessage = errorText;
+        try {
+          // Try to parse as JSON to get a more specific message from { "message": "..." }
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.message || errorText;
+        } catch (e) {
+          // It wasn't JSON, so we'll use the raw text
+        }
         toast({
           variant: "destructive",
           title: "Login Failed",
-          description: data.message || "Invalid username or password. Please try again.",
+          description: errorMessage || "Invalid username or password. Please try again.",
         });
       }
     } catch (error) {
