@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from "next/image";
 import { BarChart2, LogOut, User } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,16 +12,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 
-type User = {
+type UserData = {
   name: string;
   email: string;
 };
 
 export default function DashboardHeader() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -40,8 +37,6 @@ export default function DashboardHeader() {
     router.push("/login");
   };
 
-  const userAvatar = PlaceHolderImages.find(p => p.id === "user-avatar");
-
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-card/80 backdrop-blur-sm px-4 md:px-6">
       <div className="flex items-center gap-2">
@@ -52,21 +47,9 @@ export default function DashboardHeader() {
         {user && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                <Avatar className="h-10 w-10">
-                  {userAvatar && (
-                    <AvatarImage
-                      src={userAvatar.imageUrl}
-                      alt={user.name}
-                      data-ai-hint={userAvatar.imageHint}
-                      width={100}
-                      height={100}
-                    />
-                  )}
-                  <AvatarFallback>
-                    {user.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
+              <Button variant="ghost" size="icon" className="relative rounded-full">
+                <User className="h-5 w-5" />
+                <span className="sr-only">Open user menu</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>

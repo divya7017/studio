@@ -38,10 +38,10 @@ export const getBarChartData = async (filters: BarChartFilters): Promise<Feature
         }
     }
     if (filters.dateRange?.from) {
-        params.append('startDate', new Date(filters.dateRange.from).toISOString().split('T')[0]);
+        params.append('startDate', new Date(filters.dateRange.from).toISOString());
     }
     if (filters.dateRange?.to) {
-        params.append('endDate', new Date(filters.dateRange.to).toISOString().split('T')[0]);
+        params.append('endDate', new Date(filters.dateRange.to).toISOString());
     }
 
     const response = await fetch(`/api/analytics/bar?${params.toString()}`, {
