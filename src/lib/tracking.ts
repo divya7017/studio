@@ -12,9 +12,8 @@ export const trackFeatureClick = async (featureName: string) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
       },
-      body: JSON.stringify({ featureName }),
+      body: JSON.stringify({ featureName, token }),
     });
     if (!response.ok) {
         console.error('Failed to track feature click:', response.statusText);
