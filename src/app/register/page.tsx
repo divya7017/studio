@@ -39,7 +39,7 @@ export default function RegisterPage() {
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
-      const response = await fetch('https://man-unrailed-noncorruptibly.ngrok-free.dev/auth/register', {
+      const response = await fetch('https://analyticsdashboard-production-c0d2.up.railway.app/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
