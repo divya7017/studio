@@ -43,11 +43,11 @@ export default function LoginPage() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        if (data.access_token) {
+        const token = await response.text();
+        if (token) {
           const user = { name: values.username, email: "" };
           
-          localStorage.setItem("authToken", data.access_token);
+          localStorage.setItem("authToken", token);
           localStorage.setItem("user", JSON.stringify(user));
 
           toast({
@@ -66,11 +66,9 @@ export default function LoginPage() {
         const errorText = await response.text();
         let errorMessage = errorText;
         try {
-          // Try to parse as JSON to get a more specific message from { "message": "..." }
           const errorJson = JSON.parse(errorText);
           errorMessage = errorJson.message || errorText;
         } catch (e) {
-          // It wasn't JSON, so we'll use the raw text
         }
         toast({
           variant: "destructive",
