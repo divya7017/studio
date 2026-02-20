@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { DateRange } from 'react-day-picker';
 
@@ -26,9 +26,9 @@ export default function DashboardPage() {
   const [featureUsageData, setFeatureUsageData] = useState<FeatureUsage[]>([]);
   const [timeTrend, setTimeTrend] = useState<TimeTrend[]>([]);
   const [isLoadingBarChart, setIsLoadingBarChart] = useState(true);
-  const [isLoadingLineChart, setIsLoadingLineChart] = useState(true);
+  const [isLoadingLineChart, setIsLoadingLineChart] = useState(false);
 
-  const [selectedFeature, setSelectedFeature] = usePersistentState<string | null>('selectedFeature', null);
+  const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
