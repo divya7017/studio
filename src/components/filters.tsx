@@ -23,15 +23,32 @@ export default function Filters({
   gender,
   onGenderChange,
 }: FiltersProps) {
+  const handleDateChange = (date: DateRange | undefined) => {
+    onDateRangeChange(date);
+    if (date) {
+      trackFeatureClick('date_picker');
+    }
+  };
+
+  const handleAgeChange = (value: string) => {
+    onAgeChange(value);
+    trackFeatureClick('filter_age');
+  };
+
+  const handleGenderChange = (value: string) => {
+    onGenderChange(value);
+    trackFeatureClick('filter_gender');
+  };
+
   return (
     <div className="flex flex-wrap items-end gap-4 rounded-lg border bg-card p-4 shadow-sm">
-      <div className="grid gap-2" onClick={() => trackFeatureClick('date_picker')}>
+      <div className="grid gap-2">
         <Label htmlFor="date-range">Date Range</Label>
-        <DateRangePicker id="date-range" date={dateRange} onDateChange={onDateRangeChange} />
+        <DateRangePicker id="date-range" date={dateRange} onDateChange={handleDateChange} />
       </div>
-      <div className="grid gap-2" onClick={() => trackFeatureClick('filter_age')}>
+      <div className="grid gap-2">
         <Label htmlFor="age-filter">Age</Label>
-        <Select value={age} onValueChange={onAgeChange}>
+        <Select value={age} onValueChange={handleAgeChange}>
           <SelectTrigger id="age-filter" className="w-[180px]">
             <SelectValue placeholder="Select age" />
           </SelectTrigger>
@@ -43,9 +60,9 @@ export default function Filters({
           </SelectContent>
         </Select>
       </div>
-      <div className="grid gap-2" onClick={() => trackFeatureClick('filter_gender')}>
+      <div className="grid gap-2">
         <Label htmlFor="gender-filter">Gender</Label>
-        <Select value={gender} onValueChange={onGenderChange}>
+        <Select value={gender} onValueChange={handleGenderChange}>
           <SelectTrigger id="gender-filter" className="w-[180px]">
             <SelectValue placeholder="Select gender" />
           </SelectTrigger>
