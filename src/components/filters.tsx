@@ -4,6 +4,7 @@ import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "./date-range-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "./ui/label";
+import { trackFeatureClick } from "@/lib/tracking";
 
 interface FiltersProps {
   dateRange: DateRange | undefined;
@@ -24,11 +25,11 @@ export default function Filters({
 }: FiltersProps) {
   return (
     <div className="flex flex-wrap items-end gap-4 rounded-lg border bg-card p-4 shadow-sm">
-      <div className="grid gap-2">
+      <div className="grid gap-2" onClick={() => trackFeatureClick('date_picker')}>
         <Label htmlFor="date-range">Date Range</Label>
         <DateRangePicker id="date-range" date={dateRange} onDateChange={onDateRangeChange} />
       </div>
-      <div className="grid gap-2">
+      <div className="grid gap-2" onClick={() => trackFeatureClick('filter_age')}>
         <Label htmlFor="age-filter">Age</Label>
         <Select value={age} onValueChange={onAgeChange}>
           <SelectTrigger id="age-filter" className="w-[180px]">
@@ -42,7 +43,7 @@ export default function Filters({
           </SelectContent>
         </Select>
       </div>
-      <div className="grid gap-2">
+      <div className="grid gap-2" onClick={() => trackFeatureClick('filter_gender')}>
         <Label htmlFor="gender-filter">Gender</Label>
         <Select value={gender} onValueChange={onGenderChange}>
           <SelectTrigger id="gender-filter" className="w-[180px]">

@@ -11,6 +11,7 @@ import FeatureUsageChart from '@/components/charts/feature-usage-chart';
 import TimeTrendChart from '@/components/charts/time-trend-chart';
 import { featureUsageData, timeTrendData } from '@/lib/data';
 import usePersistentState from '@/hooks/use-persistent-state';
+import { trackFeatureClick } from '@/lib/tracking';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function DashboardPage() {
 
   const handleBarClick = (featureName: string) => {
     setSelectedFeature(featureName);
+    trackFeatureClick(featureName);
   };
   
   if (!isAuthenticated) {
