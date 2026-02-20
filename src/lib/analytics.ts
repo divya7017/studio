@@ -23,14 +23,40 @@ const parseAgeFilter = (age: string): { minAge?: number; maxAge?: number } => {
   }
 };
 
-export const getBarChartData = async (): Promise<FeatureUsage[]> => {
+export const getBarChartData = async (
+  gender?: string,
+  age?: string,
+  dateRange?: DateRange
+): Promise<FeatureUsage[]> => {
     const token = getToken();
     if (!token) {
         console.error("No auth token found");
         return [];
     }
 
-    const response = await fetch(`/api/analytics/bar`, {
+    const params = new URLSearchParams();
+    if (gender && gender !== 'all') {
+      params.append('gender', gender);
+    }
+    if (age && age !== 'all') {
+      const { minAge, maxAge } = parseAgeFilter(age);
+      if (minAge) {
+        params.append('minAge', minAge.toString());
+      }
+      if (maxAge) {
+        params.append('maxAge', maxAge.toString());
+      }
+    }
+    if (dateRange?.from) {
+      const fromDate = new Date(dateRange.from);
+      params.append('startDate', fromDate.toISOString());
+    }
+    if (dateRange?.to) {
+      const toDate = new Date(dateRange.to);
+      params.append('endDate', toDate.toISOString());
+    }
+
+    const response = await fetch(`/api/analytics/bar?${params.toString()}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }

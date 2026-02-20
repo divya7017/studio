@@ -41,30 +41,35 @@ export default function DashboardPage() {
     if (!isAuthenticated) return;
     setIsLoadingBarChart(true);
     try {
-      const data = await getBarChartData();
+      const data = await getBarChartData(gender, age, dateRange);
       setFeatureUsageData(data);
     } finally {
       setIsLoadingBarChart(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, gender, age, dateRange]);
 
   const fetchLineData = useCallback(async () => {
     if (!isAuthenticated) return;
     setIsLoadingLineChart(true);
     try {
-      const data = await getLineChartData();
+      const data = await getLineChartData(undefined, dateRange);
       setLineChartData(data);
     } finally {
       setIsLoadingLineChart(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, dateRange]);
 
   useEffect(() => {
     if(isAuthenticated) {
       fetchBarData();
+    }
+  }, [isAuthenticated, fetchBarData]);
+  
+  useEffect(() => {
+    if(isAuthenticated) {
       fetchLineData();
     }
-  }, [isAuthenticated, fetchBarData, fetchLineData]);
+  }, [isAuthenticated, fetchLineData]);
   
   const handleChartClick = () => {
     trackFeatureClick('chart_bar');
