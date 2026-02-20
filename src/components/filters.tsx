@@ -23,32 +23,33 @@ export default function Filters({
   gender,
   onGenderChange,
 }: FiltersProps) {
-  const handleDateChange = (date: DateRange | undefined) => {
-    onDateRangeChange(date);
-    if (date) {
-      trackFeatureClick('date_picker');
-    }
-  };
-
-  const handleAgeChange = (value: string) => {
-    onAgeChange(value);
-    trackFeatureClick('filter_age');
-  };
-
-  const handleGenderChange = (value: string) => {
-    onGenderChange(value);
-    trackFeatureClick('filter_gender');
-  };
-
+  
   return (
     <div className="flex flex-wrap items-end gap-4 rounded-lg border bg-card p-4 shadow-sm">
       <div className="grid gap-2">
         <Label htmlFor="date-range">Date Range</Label>
-        <DateRangePicker id="date-range" date={dateRange} onDateChange={handleDateChange} />
+        <DateRangePicker
+          id="date-range"
+          date={dateRange}
+          onDateChange={onDateRangeChange}
+          onOpenChange={(isOpen) => {
+            if (isOpen) {
+              trackFeatureClick('date_picker');
+            }
+          }}
+        />
       </div>
       <div className="grid gap-2">
         <Label htmlFor="age-filter">Age</Label>
-        <Select value={age} onValueChange={handleAgeChange}>
+        <Select
+          value={age}
+          onValueChange={onAgeChange}
+          onOpenChange={(isOpen) => {
+            if (isOpen) {
+              trackFeatureClick('filter_age');
+            }
+          }}
+        >
           <SelectTrigger id="age-filter" className="w-[180px]">
             <SelectValue placeholder="Select age" />
           </SelectTrigger>
@@ -62,7 +63,15 @@ export default function Filters({
       </div>
       <div className="grid gap-2">
         <Label htmlFor="gender-filter">Gender</Label>
-        <Select value={gender} onValueChange={handleGenderChange}>
+        <Select
+          value={gender}
+          onValueChange={onGenderChange}
+          onOpenChange={(isOpen) => {
+            if (isOpen) {
+              trackFeatureClick('filter_gender');
+            }
+          }}
+        >
           <SelectTrigger id="gender-filter" className="w-[180px]">
             <SelectValue placeholder="Select gender" />
           </SelectTrigger>
