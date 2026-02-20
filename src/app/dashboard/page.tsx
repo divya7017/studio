@@ -45,13 +45,10 @@ export default function DashboardPage() {
     try {
       const data = await getBarChartData(gender, age, dateRange);
       setFeatureUsageData(data);
-      if (!selectedFeature && data.length > 0) {
-        setSelectedFeature(data[0].name);
-      }
     } finally {
       setIsLoadingBarChart(false);
     }
-  }, [isAuthenticated, gender, age, dateRange, selectedFeature, setSelectedFeature]);
+  }, [isAuthenticated, gender, age, dateRange]);
 
   const fetchLineData = useCallback(async () => {
     if (!isAuthenticated || !selectedFeature) {
