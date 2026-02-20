@@ -11,7 +11,7 @@ export const trackFeatureClick = async (featureName: string) => {
     const response = await fetch('https://man-unrailed-noncorruptibly.ngrok-free.dev/track', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain',
       },
       body: JSON.stringify({ featureName, token }),
     });
