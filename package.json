@@ -1,4 +1,5 @@
 {
+  "homepage": "https://divya7017.github.io/studio",
   "name": "nextn",
   "version": "0.1.0",
   "private": true,
@@ -7,6 +8,8 @@
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
     "build": "NODE_ENV=production next build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
