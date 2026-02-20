@@ -2,14 +2,12 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { DateRange } from 'react-day-picker';
 
 import DashboardHeader from '@/components/dashboard-header';
 import Filters from '@/components/filters';
 import FeatureUsageChart from '@/components/charts/feature-usage-chart';
 import TimeTrendChart from '@/components/charts/time-trend-chart';
 import { FeatureUsage, TimeTrend } from '@/lib/data';
-import usePersistentState from '@/hooks/use-persistent-state';
 import { trackFeatureClick } from '@/lib/tracking';
 import { getBarChartData, getLineChartData } from '@/lib/analytics';
 import { Card } from '@/components/ui/card';
@@ -18,10 +16,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 export default function DashboardPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
-  const [dateRange, setDateRange] = usePersistentState<DateRange | undefined>('filter-dateRange', undefined);
-  const [age, setAge] = usePersistentState<string>('filter-age', 'all');
-  const [gender, setGender] = usePersistentState<string>('filter-gender', 'all');
   
   const [featureUsageData, setFeatureUsageData] = useState<FeatureUsage[]>([]);
   const [isLoadingBarChart, setIsLoadingBarChart] = useState(true);
@@ -41,23 +35,23 @@ export default function DashboardPage() {
     if (!isAuthenticated) return;
     setIsLoadingBarChart(true);
     try {
-      const data = await getBarChartData(gender, age, dateRange);
+      const data = await getBarChartData();
       setFeatureUsageData(data);
     } finally {
       setIsLoadingBarChart(false);
     }
-  }, [isAuthenticated, gender, age, dateRange]);
+  }, [isAuthenticated]);
 
   const fetchLineData = useCallback(async () => {
     if (!isAuthenticated) return;
     setIsLoadingLineChart(true);
     try {
-      const data = await getLineChartData(undefined, dateRange);
+      const data = await getLineChartData();
       setLineChartData(data);
     } finally {
       setIsLoadingLineChart(false);
     }
-  }, [isAuthenticated, dateRange]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if(isAuthenticated) {
@@ -90,12 +84,12 @@ export default function DashboardPage() {
         <div className="grid gap-4">
           <h2 className="text-2xl font-bold tracking-tight font-headline">Analytics Dashboard</h2>
           <Filters
-            dateRange={dateRange}
-            onDateRangeChange={setDateRange}
-            age={age}
-            onAgeChange={setAge}
-            gender={gender}
-            onGenderChange={setGender}
+            dateRange={undefined}
+            onDateRangeChange={() => {}}
+            age={'all'}
+            onAgeChange={() => {}}
+            gender={'all'}
+            onGenderChange={() => {}}
           />
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
@@ -121,7 +115,7 @@ export default function DashboardPage() {
               <TimeTrendChart
                 data={lineChartData}
                 featureName={null}
-                hasDateFilter={!!dateRange}
+                hasDateFilter={false}
               />
             )}
           </div>
