@@ -1,6 +1,6 @@
 "use client"
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts"
 import {
   Card,
   CardContent,
@@ -15,6 +15,10 @@ const chartConfig = {
     label: "Clicks",
     color: "hsl(var(--chart-1))",
   },
+  selected: {
+    label: "Clicks",
+    color: "hsl(var(--accent))"
+  }
 } satisfies ChartConfig
 
 interface FeatureUsageChartProps {
@@ -56,11 +60,17 @@ export default function FeatureUsageChart({ data, onBarClick, selectedFeature }:
               />
               <Bar
                 dataKey="totalClicks"
-                fill="var(--color-totalClicks)"
                 radius={4}
                 onClick={(d) => onBarClick(d.name)}
                 className="cursor-pointer"
-              />
+              >
+                 {data.map((entry) => (
+                    <Cell 
+                      key={`cell-${entry.name}`} 
+                      fill={entry.name === selectedFeature ? "hsl(var(--accent))" : "hsl(var(--chart-1))"} 
+                    />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { DateRange } from 'react-day-picker';
 
 import DashboardHeader from '@/components/dashboard-header';
 import Filters from '@/components/filters';
@@ -22,6 +23,11 @@ export default function DashboardPage() {
   const [lineChartData, setLineChartData] = useState<TimeTrend[]>([]);
   const [isLoadingLineChart, setIsLoadingLineChart] = useState(true);
 
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const [age, setAge] = useState('all');
+  const [gender, setGender] = useState('all');
+  const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
+
   useEffect(() => {
     const token = localStorage.getItem('authToken');
     if (!token) {
@@ -35,38 +41,46 @@ export default function DashboardPage() {
     if (!isAuthenticated) return;
     setIsLoadingBarChart(true);
     try {
-      const data = await getBarChartData();
+      const data = await getBarChartData({ gender, age, dateRange });
       setFeatureUsageData(data);
     } finally {
       setIsLoadingBarChart(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, gender, age, dateRange]);
 
   const fetchLineData = useCallback(async () => {
     if (!isAuthenticated) return;
     setIsLoadingLineChart(true);
     try {
-      const data = await getLineChartData();
+      const data = await getLineChartData({ featureName: selectedFeature, dateRange });
       setLineChartData(data);
     } finally {
       setIsLoadingLineChart(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, selectedFeature, dateRange]);
 
   useEffect(() => {
-    if(isAuthenticated) {
-      fetchBarData();
-    }
-  }, [isAuthenticated, fetchBarData]);
-  
+    fetchBarData();
+  }, [fetchBarData]);
+
   useEffect(() => {
-    if(isAuthenticated) {
-      fetchLineData();
-    }
-  }, [isAuthenticated, fetchLineData]);
+    fetchLineData();
+  }, [fetchLineData]);
   
-  const handleChartClick = () => {
-    trackFeatureClick('chart_bar');
+  const handleChartClick = (featureName: string) => {
+    trackFeatureClick(featureName);
+  };
+  
+  const handleBarClick = (barName: string) => {
+    handleChartClick('chart_bar_click');
+    setSelectedFeature(prev => prev === barName ? null : barName);
+  };
+
+  const handleReset = () => {
+    setDateRange(undefined);
+    setAge('all');
+    setGender('all');
+    setSelectedFeature(null);
   };
 
   if (!isAuthenticated) {
@@ -84,16 +98,17 @@ export default function DashboardPage() {
         <div className="grid gap-4">
           <h2 className="text-2xl font-bold tracking-tight font-headline">Analytics Dashboard</h2>
           <Filters
-            dateRange={undefined}
-            onDateRangeChange={() => {}}
-            age={'all'}
-            onAgeChange={() => {}}
-            gender={'all'}
-            onGenderChange={() => {}}
+            dateRange={dateRange}
+            onDateRangeChange={setDateRange}
+            age={age}
+            onAgeChange={setAge}
+            gender={gender}
+            onGenderChange={setGender}
+            onReset={handleReset}
           />
         </div>
         <div className="grid gap-4 md:gap-8 lg:grid-cols-2">
-          <div className="col-span-1 cursor-pointer" onClick={handleChartClick}>
+          <div className="col-span-1">
             {isLoadingBarChart ? (
                 <Card>
                     <Skeleton className="h-[388px] w-full" />
@@ -101,12 +116,12 @@ export default function DashboardPage() {
             ) : (
                 <FeatureUsageChart 
                     data={featureUsageData} 
-                    onBarClick={() => {}} // onBarClick does nothing for now
-                    selectedFeature={null}
+                    onBarClick={handleBarClick}
+                    selectedFeature={selectedFeature}
                 />
             )}
           </div>
-          <div className="col-span-1 cursor-pointer" onClick={handleChartClick}>
+          <div className="col-span-1" onClick={() => handleChartClick('chart_line_click')}>
             {isLoadingLineChart ? (
               <Card>
                 <Skeleton className="h-[388px] w-full" />
@@ -114,8 +129,8 @@ export default function DashboardPage() {
             ) : (
               <TimeTrendChart
                 data={lineChartData}
-                featureName={null}
-                hasDateFilter={false}
+                featureName={selectedFeature}
+                hasDateFilter={!!dateRange?.from}
               />
             )}
           </div>

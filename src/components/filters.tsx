@@ -5,6 +5,7 @@ import { DateRangePicker } from "./date-range-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "./ui/label";
 import { trackFeatureClick } from "@/lib/tracking";
+import { Button } from "./ui/button";
 
 interface FiltersProps {
   dateRange: DateRange | undefined;
@@ -13,6 +14,7 @@ interface FiltersProps {
   onAgeChange: (age: string) => void;
   gender: string;
   onGenderChange: (gender: string) => void;
+  onReset: () => void;
 }
 
 export default function Filters({
@@ -22,6 +24,7 @@ export default function Filters({
   onAgeChange,
   gender,
   onGenderChange,
+  onReset,
 }: FiltersProps) {
   
   return (
@@ -83,6 +86,12 @@ export default function Filters({
           </SelectContent>
         </Select>
       </div>
+      <Button variant="outline" onClick={() => {
+        onReset();
+        trackFeatureClick('reset_filters');
+      }}>
+        Reset Filters
+      </Button>
     </div>
   );
 }
