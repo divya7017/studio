@@ -13,6 +13,7 @@ import { trackFeatureClick } from '@/lib/tracking';
 import { getBarChartData, getLineChartData } from '@/lib/analytics';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import usePersistentState from '@/hooks/use-persistent-state';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -23,9 +24,9 @@ export default function DashboardPage() {
   const [lineChartData, setLineChartData] = useState<TimeTrend[]>([]);
   const [isLoadingLineChart, setIsLoadingLineChart] = useState(true);
 
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
-  const [age, setAge] = useState('all');
-  const [gender, setGender] = useState('all');
+  const [dateRange, setDateRange] = usePersistentState<DateRange | undefined>('filter_dateRange', undefined);
+  const [age, setAge] = usePersistentState<string>('filter_age', 'all');
+  const [gender, setGender] = usePersistentState<string>('filter_gender', 'all');
   const [selectedFeature, setSelectedFeature] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,27 +38,37 @@ export default function DashboardPage() {
     }
   }, [router]);
 
+  // Dates are stored as strings in localStorage, so we need to revive them into Date objects.
+  const revivedDateRange = (() => {
+    if (!dateRange) return undefined;
+    const { from, to } = dateRange;
+    return {
+      from: from ? new Date(from) : undefined,
+      to: to ? new Date(to) : undefined,
+    };
+  })();
+
   const fetchBarData = useCallback(async () => {
     if (!isAuthenticated) return;
     setIsLoadingBarChart(true);
     try {
-      const data = await getBarChartData({ gender, age, dateRange });
+      const data = await getBarChartData({ gender, age, dateRange: revivedDateRange });
       setFeatureUsageData(data);
     } finally {
       setIsLoadingBarChart(false);
     }
-  }, [isAuthenticated, gender, age, dateRange]);
+  }, [isAuthenticated, gender, age, revivedDateRange]);
 
   const fetchLineData = useCallback(async () => {
     if (!isAuthenticated) return;
     setIsLoadingLineChart(true);
     try {
-      const data = await getLineChartData({ featureName: selectedFeature, dateRange, age, gender });
+      const data = await getLineChartData({ featureName: selectedFeature, dateRange: revivedDateRange, age, gender });
       setLineChartData(data);
     } finally {
       setIsLoadingLineChart(false);
     }
-  }, [isAuthenticated, selectedFeature, dateRange, age, gender]);
+  }, [isAuthenticated, selectedFeature, revivedDateRange, age, gender]);
 
   useEffect(() => {
     fetchBarData();
@@ -94,7 +105,7 @@ export default function DashboardPage() {
         <div className="grid gap-4">
           <h2 className="text-2xl font-bold tracking-tight font-headline">Analytics Dashboard</h2>
           <Filters
-            dateRange={dateRange}
+            dateRange={revivedDateRange}
             onDateRangeChange={setDateRange}
             age={age}
             onAgeChange={setAge}
@@ -126,7 +137,7 @@ export default function DashboardPage() {
               <TimeTrendChart
                 data={lineChartData}
                 featureName={selectedFeature}
-                hasDateFilter={!!dateRange?.from}
+                hasDateFilter={!!revivedDateRange?.from}
               />
             )}
           </div>

@@ -34,9 +34,9 @@ export default function Filters({
         <DateRangePicker
           id="date-range"
           date={dateRange}
-          onDateChange={onDateRangeChange}
-          onOpenChange={(isOpen) => {
-            if (isOpen) {
+          onDateChange={(range) => {
+            onDateRangeChange(range);
+            if (range) {
               trackFeatureClick('date_picker');
             }
           }}
@@ -46,11 +46,9 @@ export default function Filters({
         <Label htmlFor="age-filter">Age</Label>
         <Select
           value={age}
-          onValueChange={onAgeChange}
-          onOpenChange={(isOpen) => {
-            if (isOpen) {
-              trackFeatureClick('filter_age');
-            }
+          onValueChange={(value) => {
+            onAgeChange(value);
+            trackFeatureClick('filter_age');
           }}
         >
           <SelectTrigger id="age-filter" className="w-[180px]">
@@ -68,11 +66,9 @@ export default function Filters({
         <Label htmlFor="gender-filter">Gender</Label>
         <Select
           value={gender}
-          onValueChange={onGenderChange}
-          onOpenChange={(isOpen) => {
-            if (isOpen) {
-              trackFeatureClick('filter_gender');
-            }
+          onValueChange={(value) => {
+            onGenderChange(value);
+            trackFeatureClick('filter_gender');
           }}
         >
           <SelectTrigger id="gender-filter" className="w-[180px]">
