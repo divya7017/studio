@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { search } = request.nextUrl;
-    const externalApiUrl = `https://man-unrailed-noncorruptibly.ngrok-free.dev/analytics/bar${search}`;
+    const externalApiUrl = `https://analyticsdashboard-production-c0d2.up.railway.app/analytics/bar${search}`;
 
     const externalApiResponse = await fetch(externalApiUrl, {
       method: 'GET',
