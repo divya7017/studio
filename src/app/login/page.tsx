@@ -14,7 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { BarChart2 } from 'lucide-react';
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Invalid email address." }),
+  username: z.string().min(1, { message: "Username is required." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
 });
 
@@ -26,34 +26,47 @@ export default function LoginPage() {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-
-    if (values.email === "admin@datasight.com" && values.password === "password") {
-      // Simulate JWT token
-      const fakeToken = "_mock_jwt_token_" + Math.random();
-      const user = { name: "Admin User", email: "admin@datasight.com" };
-      
-      localStorage.setItem("authToken", fakeToken);
-      localStorage.setItem("user", JSON.stringify(user));
-
-      toast({
-        title: "Login Successful",
-        description: "Welcome back!",
+    try {
+      const response = await fetch('https://man-unrailed-noncorruptibly.ngrok-free.dev/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       });
-      router.push("/dashboard");
-    } else {
-      toast({
+
+      const data = await response.json();
+
+      if (response.ok && data.access_token) {
+        const user = { name: values.username, email: "" };
+        
+        localStorage.setItem("authToken", data.access_token);
+        localStorage.setItem("user", JSON.stringify(user));
+
+        toast({
+          title: "Login Successful",
+          description: "Welcome back!",
+        });
+        router.push("/dashboard");
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Login Failed",
+          description: data.message || "Invalid username or password. Please try again.",
+        });
+      }
+    } catch (error) {
+       toast({
         variant: "destructive",
-        title: "Login Failed",
-        description: "Invalid email or password. Please try again.",
+        title: "Login Error",
+        description: "An unexpected error occurred. Please try again later.",
       });
     }
     setIsLoading(false);
@@ -74,12 +87,12 @@ export default function LoginPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="admin@datasight.com" {...field} />
+                      <Input placeholder="your_username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

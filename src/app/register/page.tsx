@@ -12,11 +12,13 @@ import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { BarChart2 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const registerSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Invalid email address." }),
+  username: z.string().min(2, { message: "Username must be at least 2 characters." }),
   password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  age: z.coerce.number().min(1, { message: "Please enter a valid age." }),
+  gender: z.string().min(1, { message: "Please select a gender." }),
 });
 
 export default function RegisterPage() {
@@ -27,30 +29,50 @@ export default function RegisterPage() {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      name: "",
-      email: "",
+      username: "",
       password: "",
+      gender: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
-    // Simulate API call for registration
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch('https://man-unrailed-noncorruptibly.ngrok-free.dev/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
 
-    // Simulate successful registration and login
-    const fakeToken = "_mock_jwt_token_" + Math.random();
-    const user = { name: values.name, email: values.email };
+      const data = await response.json();
+
+      if (response.ok && data.access_token) {
+        const user = { name: values.username, email: "" };
       
-    localStorage.setItem("authToken", fakeToken);
-    localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("authToken", data.access_token);
+        localStorage.setItem("user", JSON.stringify(user));
 
-    toast({
-      title: "Registration Successful",
-      description: "Your account has been created.",
-    });
-    router.push("/dashboard");
-
+        toast({
+          title: "Registration Successful",
+          description: "Your account has been created.",
+        });
+        router.push("/dashboard");
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Registration Failed",
+          description: data.message || "Could not create your account. Please try again.",
+        });
+      }
+    } catch (error) {
+       toast({
+        variant: "destructive",
+        title: "Registration Error",
+        description: "An unexpected error occurred. Please try again later.",
+      });
+    }
     setIsLoading(false);
   };
 
@@ -69,25 +91,12 @@ export default function RegisterPage() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="name"
+                name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="john.doe@example.com" {...field} />
+                      <Input placeholder="your_username" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -102,6 +111,41 @@ export default function RegisterPage() {
                     <FormControl>
                       <Input type="password" placeholder="••••••" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="age"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Age</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="25" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+               <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gender</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="male">Male</SelectItem>
+                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
