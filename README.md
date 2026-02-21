@@ -159,16 +159,13 @@ Each call generates random feature_click records distributed across multiple dat
 
 # Scalability Essay – Handling 1 Million Write Events per Minute
 
-The current architecture writes directly to MySQL via the `/track` endpoint. This approach would fail at 1 million write-events per minute due to database write bottlenecks.
+If this system needs to handle 1 million write events per minute:
 
-To scale:
+- Use Kafka between API and database
+- Make `/track` asynchronous
+- Batch insert into database
+- Use Redis caching
+- Add read replicas
+- Scale backend horizontally
 
-1. Introduce Kafka between API and database.
-2. Publish `/track` events asynchronously.
-3. Batch insert events via consumer services.
-4. Partition feature_clicks table by date.
-5. Use Redis caching for analytics.
-6. Add read replicas for heavy queries.
-7. Horizontally scale backend instances.
-
-This event-driven architecture enables high-throughput ingestion while maintaining system stability.
+Direct database writes will not handle that load.
