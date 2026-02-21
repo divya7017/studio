@@ -20,12 +20,16 @@ Line Chart → Time-based trend for selected feature
 The system supports authentication, filtering, aggregation, and persistent user preferences.
 
 Tech Stack
-1.Backend
-2.Spring Boot
-3.Hibernate
-4. MySQL
-5.JWT Authentication
-6.REST APIs
+Backend
+1.Spring Boot
+
+2.Hibernate
+
+3. MySQL
+   
+4.JWT Authentication
+
+5.REST APIs
 
 Frontend
 1.Next.js (React)
