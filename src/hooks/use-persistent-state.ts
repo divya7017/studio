@@ -10,7 +10,11 @@ function usePersistentState<T>(key: string, initialValue: T): [T, (value: T | ((
     }
     try {
       const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
+      // Don't parse if item is null or the literal string "undefined"
+      if (item === null || item === 'undefined') {
+        return initialValue;
+      }
+      return JSON.parse(item);
     } catch (error) {
       console.error(error);
       return initialValue;
@@ -22,7 +26,12 @@ function usePersistentState<T>(key: string, initialValue: T): [T, (value: T | ((
       const valueToStore = value instanceof Function ? value(storedValue) : value;
       setStoredValue(valueToStore);
       if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        if (valueToStore === undefined) {
+          // Don't store undefined, remove the key.
+          window.localStorage.removeItem(key);
+        } else {
+          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        }
       }
     } catch (error) {
       console.error(error);
@@ -34,7 +43,7 @@ function usePersistentState<T>(key: string, initialValue: T): [T, (value: T | ((
     // if the localStorage value differs from the initial server-rendered value.
     try {
       const item = window.localStorage.getItem(key);
-      if (item) {
+      if (item && item !== 'undefined') {
         const parsedItem = JSON.parse(item);
         if (JSON.stringify(parsedItem) !== JSON.stringify(storedValue)) {
             setStoredValue(parsedItem);
