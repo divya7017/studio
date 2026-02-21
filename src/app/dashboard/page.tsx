@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { DateRange } from 'react-day-picker';
 
@@ -39,14 +39,14 @@ export default function DashboardPage() {
   }, [router]);
 
   // Dates are stored as strings in localStorage, so we need to revive them into Date objects.
-  const revivedDateRange = (() => {
+  const revivedDateRange = useMemo(() => {
     if (!dateRange) return undefined;
     const { from, to } = dateRange;
     return {
       from: from ? new Date(from) : undefined,
       to: to ? new Date(to) : undefined,
     };
-  })();
+  }, [dateRange]);
 
   const fetchBarData = useCallback(async () => {
     if (!isAuthenticated) return;
