@@ -1,102 +1,174 @@
-Interactive Product Analytics Dashboard
-1. Source Code
-Backend (Spring Boot)
-https://github.com/divya7017/analyticsdashboard
-Frontend (Next.js)
-https://github.com/divya7017/studio
+# Interactive Product Analytics Dashboard
 
-2. Live Demo
-Frontend (Vercel):
-https://studio-theta-ecru.vercel.app/login
-Backend API (Railway/Render):
-https://analyticsdashboard-production-c0d2.up.railway.app
+---
 
-4. Documentation
-Project Overview
+## Source Code
+
+### Backend (Spring Boot – MySQL)
+https://github.com/divya7017/analyticsdashboard  
+
+### Frontend (Next.js)
+https://github.com/divya7017/studio  
+
+---
+
+## Live Demo
+
+### Frontend (Vercel)
+https://studio-theta-ecru.vercel.app/login  
+
+### Backend API (Railway)
+https://analyticsdashboard-production-c0d2.up.railway.app  
+
+---
+
+# Project Overview
+
 This is a Full Stack Interactive Product Analytics Dashboard that tracks its own usage.
-Every user interaction (filter change, chart click) is recorded using the /track endpoint and stored in the database. The stored data is then visualized using:
-Bar Chart → Total feature usage
-Line Chart → Time-based trend for selected feature
+
+Every user interaction (filter change, chart click) is recorded using the `/track` endpoint and stored in the database.
+
+The stored data is visualized using:
+
+- **Bar Chart** → Total feature usage  
+- **Line Chart** → Time-based trend for selected feature  
+
 The system supports authentication, filtering, aggregation, and persistent user preferences.
 
-Tech Stack
-Backend
-1.Spring Boot
+---
 
-2.Hibernate
+# Tech Stack
 
-3. MySQL
-   
-4.JWT Authentication
+## Backend
+- Spring Boot  
+- Hibernate / JPA  
+- MySQL  
+- JWT Authentication  
+- REST APIs  
+- Railway Deployment  
 
-5.REST APIs
+## Frontend
+- Next.js (React)  
+- Chart Library  
+- Axios  
+- Cookie-based filter persistence  
+- Vercel Deployment  
 
-Frontend
-1.Next.js (React)
-2.Chart library
-3.Axios
-4.Cookie-based filter persistence
+---
 
-Instructions to Run Locally
-Backend Setup
+# Instructions to Run Locally
 
-Clone repository:
+## Backend Setup
 
+### Clone Repository
+
+```bash
 git clone https://github.com/divya7017/analyticsdashboard.git
 cd analyticsdashboard
+```
 
-Configure database in application.properties:
+### Create MySQL Database
 
-spring.datasource.url=jdbc:postgresql://localhost:5432/analytics
+```sql
+CREATE DATABASE analytics;
+```
+
+### Configure application.properties
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/analytics
 spring.datasource.username=your_username
 spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+spring.jpa.show-sql=true
+```
 
-Run application:
+### Run Backend
 
+```bash
 mvn clean install
 mvn spring-boot:run
+```
 
-Backend runs on:
-
+Backend runs at:
 http://localhost:8080
 
-Frontend Setup
+---
 
-Clone frontend repository.
+## Frontend Setup
 
-Install dependencies:
-
+```bash
+git clone https://github.com/divya7017/studio.git
+cd studio
 npm install
+```
 
-Create .env.local:
+Create `.env.local`:
 
+```
 NEXT_PUBLIC_API_URL=http://localhost:8080
+```
 
 Run:
 
+```bash
 npm run dev
+```
 
-Frontend runs on:
-
+Frontend runs at:
 http://localhost:3000
 
-Architectural Choices
+---
 
-1.Layered architecture (Controller → Service → Repository) ensures separation of concerns.
-2.JWT authentication provides stateless security.
-3.Aggregation queries use SQL GROUP BY for performance.
-4.RESTful design with query parameters for filtering.
-5.Cookie persistence improves user experience without extra server load.
-6.Frontend and backend are deployed separately for independent scaling.
+# API Endpoints
 
-Dummy Data Seeder
+## Authentication
+- POST /register  
+- POST /login  
+
+## Tracking
+- POST /track  
+
+## Analytics
+- GET /analytics  
+
+---
+
+# Dummy Data Seeder
+
 To generate dummy analytics data:
-Endpoint:
-GET https://analyticsdashboard-production-c0d2.up.railway.app/dummy
-This endpoint:
-Creates 1000 random feature_click records
-Distributes timestamps across multiple dates
-Simulates realistic usage patterns
-You can call this endpoint multiple times to generate additional batches of 200 records.
-This ensures the dashboard does not appear empty.
+
+GET  
+https://analyticsdashboard-production-c0d2.up.railway.app/dummy  
+
+Each call generates random feature_click records distributed across multiple dates.
+
+---
+
+# Architectural Choices
+
+1. Layered architecture (Controller → Service → Repository).  
+2. Stateless JWT authentication.  
+3. SQL GROUP BY aggregation for performance.  
+4. RESTful API with query parameters.  
+5. Cookie-based filter persistence.  
+6. Separate frontend and backend deployment.  
+
+---
+
+# Scalability Essay – Handling 1 Million Write Events per Minute
+
+The current architecture writes directly to MySQL via the `/track` endpoint. This approach would fail at 1 million write-events per minute due to database write bottlenecks.
+
+To scale:
+
+1. Introduce Kafka between API and database.
+2. Publish `/track` events asynchronously.
+3. Batch insert events via consumer services.
+4. Partition feature_clicks table by date.
+5. Use Redis caching for analytics.
+6. Add read replicas for heavy queries.
+7. Horizontally scale backend instances.
+
+This event-driven architecture enables high-throughput ingestion while maintaining system stability.
