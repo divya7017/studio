@@ -46,7 +46,7 @@ export default function DashboardPage() {
       from: from ? new Date(from) : undefined,
       to: to ? new Date(to) : undefined,
     };
-  }, [dateRange]);
+  }, [dateRange?.from, dateRange?.to]);
 
   const fetchBarData = useCallback(async () => {
     if (!isAuthenticated) return;
